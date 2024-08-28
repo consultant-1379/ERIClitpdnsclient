@@ -1,0 +1,18 @@
+litp create -p /ms/configs/mstest01a -t dns-client -o search=foo.com  
+ 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01a -t nameserver -o ipaddress=10.10.10.101 position=1 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01b -t nameserver -o ipaddress=0:0:0:0:0:ffff:a0a:a6 position=3 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01c -t nameserver -o ipaddress=10.10.10.103 position=2
+litp create_plan
+litp run_plan
+
+
+litp remove -p /ms/configs/mstest01a
+
+litp create -p /ms/configs/mstest01b -t dns-client -o search=foo.com
+litp create -p /ms/configs/mstest01b/nameservers/nameserver_01b -t nameserver -o ipaddress=10.10.10.101 position=1
+
+litp create -p /ms/configs/mstest01c -t dns-client -o search=foo.com
+litp create -p /ms/configs/mstest01c/nameservers/nameserver_01b -t nameserver -o ipaddress=10.10.10.101 position=1
+
+assertError create_plan

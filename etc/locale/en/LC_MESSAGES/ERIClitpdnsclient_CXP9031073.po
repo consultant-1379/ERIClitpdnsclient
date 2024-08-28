@@ -1,0 +1,21 @@
+#This file contains the translations.
+#For new translations run the command:  msgfmt ./etc/dnsclientplugin.po -o ./etc/en_ericsson/LC_MESSAGES/dnsclientplugin.mo  
+
+msgid ""
+msgstr ""
+"Project-Id-Version: ERIClitpdnsclient_CXP9031073\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-01-23 19:08+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+ 
+msgid "DUPLICATE_NS_POS"
+msgstr "Duplicate nameserver position \"%s\""
+ 
+msgid "ONLY_ONE_DNSCLIENT_PER_NODE"
+msgstr "Only one \"dns-client\" may be configured per node"

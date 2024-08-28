@@ -1,0 +1,50 @@
+#Important AT for testing phases
+# Basic 2 node deployment setup
+runLitpScript two-node-std.inc
+
+add-extensions plugins/dummy_bar
+add-plugins plugins/dummy_bar
+
+litp create -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a -t dns-client -o search=foo.com,test.com,test.com
+litp create -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01a -t nameserver -o ipaddress=10.10.10.101 position=1 
+litp create -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01b -t nameserver -o ipaddress=0:0:0:0:0:ffff:a0a:a6 position=3 
+litp create -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01c -t nameserver -o ipaddress=10.10.10.103 position=2
+litp create_plan
+litp run_plan
+
+litp create -p /software/items/bar1 -t bar -o name=baz1
+litp inherit -p /deployments/site1/clusters/cluster1/nodes/node2/items/bar1 -s /software/items/bar1
+litp remove -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a
+
+litp create_plan
+
+failConfigTask bar node2 /deployments/site1/clusters/cluster1/nodes/node2/items/bar1
+litp run_plan
+
+assertPlanState failed
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a ForRemoval
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01a ForRemoval
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01b ForRemoval
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01c ForRemoval
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/items/bar1 Initial
+
+litp create_plan
+#show show_plan
+failConfigTask dnsclient::nameserver node2 /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a
+litp run_plan
+
+assertPlanState failed
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a ForRemoval
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01a ForRemoval
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01b ForRemoval
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a/nameservers/nameserver_01c ForRemoval
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/items/bar1 Applied
+
+litp create_plan
+#show show_plan
+litp run_plan
+
+assertPlanState successful
+assertState -p /deployments/site1/clusters/cluster1/nodes/node2/items/bar1 Applied
+assertNone -p /deployments/site1/clusters/cluster1/nodes/node2/configs/mstest01a
+

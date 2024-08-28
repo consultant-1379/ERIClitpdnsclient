@@ -1,0 +1,35 @@
+#create dns-client config on the MS
+litp create -t dns-client -p /ms/configs/ms_dns_client -o search=foo-ms.com
+
+#create nameservers on the MS with IPv6 addresses that contain prefixes
+litp create -t nameserver -p /ms/configs/ms_dns_client/nameservers/nameserver_a -o ipaddress=2001:1b70:6207:5f:0000:4024:5622:1c/32 position=1
+litp create -t nameserver -p /ms/configs/ms_dns_client/nameservers/nameserver_b -o ipaddress=2001:1b70::1e/128 position=2
+litp create -t nameserver -p /ms/configs/ms_dns_client/nameservers/nameserver_c -o ipaddress=2001:1b70::1d/64 position=3
+
+assertState -p /ms/configs/ms_dns_client/nameservers/nameserver_a Initial
+assertState -p /ms/configs/ms_dns_client/nameservers/nameserver_b Initial
+assertState -p /ms/configs/ms_dns_client/nameservers/nameserver_c Initial
+
+litp create_plan
+
+assertConfigTask ms1 dnsclient::nameserver ms1_/ms/configs/ms_dns_client /ms/configs/ms_dns_client search=foo-ms.com name2=2001:1b70::1e name3=2001:1b70::1d name1=2001:1b70:6207:5f:0000:4024:5622:1c
+
+litp run_plan
+
+#assert plan was successful and all nameserver items are applied.
+assertPlanState successful
+assertState -p /ms/configs/ms_dns_client/nameservers/nameserver_a Applied
+assertState -p /ms/configs/ms_dns_client/nameservers/nameserver_b Applied
+assertState -p /ms/configs/ms_dns_client/nameservers/nameserver_c Applied
+
+litp remove -p /ms/configs/ms_dns_client/nameservers/nameserver_a
+
+litp create_plan
+
+assertConfigTask ms1 dnsclient::nameserver ms1_/ms/configs/ms_dns_client /ms/configs/ms_dns_client search=foo-ms.com name2=2001:1b70::1e name3=2001:1b70::1d name1=
+
+litp run_plan
+
+#assert plan was successful and the nameserver item is removed.
+assertPlanState successful
+assertError --err_type InvalidLocationError --err_message 'Not found' show -p /ms/configs/ms_dns_client/nameservers/nameserver_a

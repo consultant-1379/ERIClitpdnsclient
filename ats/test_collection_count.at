@@ -1,0 +1,71 @@
+litp create -p /ms/configs/mstest01a -t dns-client
+ 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01a -t nameserver -o ipaddress=10.10.10.101 position=1 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01b -t nameserver -o ipaddress=0:0:0:0:0:ffff:a0a:a6 position=3 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01c -t nameserver -o ipaddress=10.10.10.103 position=2
+
+litp create_plan
+#show show_plan
+litp run_plan
+
+#Upate nameserver and search
+litp update -p /ms/configs/mstest01a/nameservers/nameserver_01c -o ipaddress=10.10.10.104
+litp update -p /ms/configs/mstest01a -o search=foo.com,test.com,test.com
+litp create_plan
+litp run_plan
+#show show_plan
+
+#Remove nameserver
+litp remove -p /ms/configs/mstest01a/nameservers/nameserver_01b
+litp create_plan
+litp run_plan
+#show show_plan
+
+#Adding nameserver
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01d  -t nameserver -o ipaddress=10.10.10.103 position=3
+litp create_plan
+litp run_plan
+#show show_plan
+
+#Update Search
+litp update -p /ms/configs/mstest01a -o search=bar.com,test.com,test.com
+litp create_plan
+litp run_plan
+#show show_plan
+
+#Remove DNS Client
+litp remove -p /ms/configs/mstest01a
+litp create_plan
+litp run_plan
+#show show_plan
+
+
+
+#litp remove -p /ms/configs/mstest01a/nameservers/nameserver_01a 
+#litp remove -p /ms/configs/mstest01a/nameservers/nameserver_01b 
+#litp remove -p /ms/configs/mstest01a/nameservers/nameserver_01c
+
+
+#litp remove -p /ms/configs/mstest01a
+
+
+#litp create -p /ms/configs/mstest02a -t dns-client -o search=foo.com  
+ 
+#litp create -p /ms/configs/mstest02a/nameservers/nameserver_01a -t nameserver -o ipaddress=10.10.10.101 position=1
+
+#litp create_plan
+#litp run_plan
+
+#litp remove -p /ms/configs/mstest01a/nameservers/nameserver_01a 
+#litp remove -p /ms/configs/mstest01a/nameservers/nameserver_01b 
+#litp remove -p /ms/configs/mstest01a/nameservers/nameserver_01c
+
+#litp create_plan
+#litp run_plan
+
+
+#litp remove -p /ms/configs/mstest01a/nameservers/nameserver_01d -t nameserver -o ipaddress=10.10.10.104 position=2
+
+#litp create_plan
+#litp run_plan
+

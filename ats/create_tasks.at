@@ -1,0 +1,46 @@
+#litp create -p /ms/configs/mstest01a -t dns-client -o search=foo.com 
+#litp create -p /ms/configs/mstest01a/nameservers/nameserver_01a -t nameserver -o ipaddress=10.10.10.101 position=3 
+
+litp create -p /ms/configs/mstest01a -t dns-client -o search=d1.com,d2.com,d3.com,d4.com,d5.com,d6.com 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01a -t nameserver -o ipaddress=10.10.10.101 position=1 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01b -t nameserver -o ipaddress=0:0:0:0:0:ffff:a0a:a6 position=3 
+litp create -p /ms/configs/mstest01a/nameservers/nameserver_01c -t nameserver -o ipaddress=10.10.10.103 position=2 
+#litp create -p /ms/configs/n2test01a -t dns-client 
+#litp create -p /ms/configs/mstest01a/nameservers/nameserver_01a -t nameserver -o ipaddress=0:0:0:0:0:ffff:a0a:a66 position=3 
+#litp create -p /ms/configs/mstest01a/nameservers/nameserver_01b -t nameserver -o ipaddress=10.10.10.202 position=2 
+litp create_plan
+
+
+#litp create -t dns-client -p /ms/configs/dns_client -o search="exampleone.com,exampletwo.com,examplethree.com"
+#litp create -t nameserver -p /ms/configs/dns_client/nameservers/my_name_server_A -o ipaddress=10.10.10.1 position=1
+#litp create -t nameserver -p /ms/configs/dns_client/nameservers/my_name_server_B -o ipaddress=10.10.10.7 position=2
+#litp create -t nameserver -p /ms/configs/dns_client/nameservers/my_name_server_C -o ipaddress=10.10.10.67 position=3
+#litp create_plan
+# assertions for expected tasks
+
+#litp run_plan
+
+#litp update -p /ms/configs/dns_client/nameservers/my_name_server_A -o ipaddress=10.10.10.22 position=3
+#litp update -p /ms/configs/dns_client/nameservers/my_name_server_C -o ipaddress=10.10.10.111 position=1
+#litp create_plan
+# assertions for expected tasks
+
+
+#litp run_plan
+
+#litp remove -p /ms/configs/dns_client/nameservers/my_name_server_C
+#litp create_plan
+# assertions for expected tasks
+
+
+#litp run_plan
+
+#litp remove -p /ms/configs/dns_client
+#litp create_plan
+# assertions for expected tasks
+
+
+#litp run_plan
+
+#assertFileContents puppet/dnsclient_tasks.at.pp /opt/ericsson/nms/litp/etc/puppet/manifests/plugins/ms1.pp
+    
